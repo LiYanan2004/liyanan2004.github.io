@@ -6,7 +6,7 @@
   <link href="https://liyanan2004.github.io/atom.xml" rel="self"/>
   
   <link href="https://liyanan2004.github.io/"/>
-  <updated>2022-10-03T15:19:35.464Z</updated>
+  <updated>2022-10-03T15:28:16.477Z</updated>
   <id>https://liyanan2004.github.io/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Apple Watch Series 8 麦克风间歇性失灵</title>
+    <title>新手表居然就卡bug？watchOS 9 太拉了...</title>
     <link href="https://liyanan2004.github.io/apple-watch-series-8-mic-failed/"/>
     <id>https://liyanan2004.github.io/apple-watch-series-8-mic-failed/</id>
     <published>2022-10-03T08:47:08.200Z</published>
-    <updated>2022-10-03T15:19:35.464Z</updated>
+    <updated>2022-10-03T15:28:16.477Z</updated>
     
     <content type="html"><![CDATA[<p>如图</p><p><img src="/img/apple-watch-series-8-mic-failed/mic-failed.jpeg"></p><span id="more"></span><h2 id="高高兴兴地开箱"><a href="#高高兴兴地开箱" class="headerlink" title="高高兴兴地开箱"></a>高高兴兴地开箱</h2><p>视频在审核…不过现在在看博客的你，应该看过了。</p><hr><h2 id="麦克风开始抽风"><a href="#麦克风开始抽风" class="headerlink" title="麦克风开始抽风"></a>麦克风开始抽风</h2><p>刚刚激活，就…</p><p><img src="/img/apple-watch-series-8-mic-failed/mic-bug-wechat.jpeg" alt="刚激活就失灵了一次"></p><p>又陆陆续续失灵了几次，<strong>重启都能解决</strong>…</p><p><strong>发了条微博：<a href="https://weibo.com/6341527351/M6sL4c4RH">麦克风失灵</a></strong></p><p>评论来看，也有问题…</p><p><img src="/img/apple-watch-series-8-mic-failed/mic-bug-weibo-comments.jpeg"></p><p><strong>在论坛里也找到了一样的问题：<a href="https://discussionschinese.apple.com/thread/254207265?page=2">iwatch s8 麦克风高频率拾音故障</a></strong></p><blockquote><p><strong>吐槽下，iWatch是什么东西…懂，但是没有这个名字</strong></p></blockquote><hr><h2 id="复现问题-amp-amp-反馈问题"><a href="#复现问题-amp-amp-反馈问题" class="headerlink" title="复现问题 &amp;&amp; 反馈问题"></a>复现问题 &amp;&amp; 反馈问题</h2><p>觉得像是软件的 bug</p><p>打了个 400 电话，让我重新配对，</p><p><strong>肯定是没效果的啦！</strong></p><p>但是，</p><p>我感觉像是<strong>噪声</strong>app的环境音量检测出 bug 了，关掉之后，确实<em><strong>缓解了</strong></em>。</p><p>解决了，但是没有完全解决。</p><p>好在，</p><p>又发现了一个不用重启的解决方案，</p><p>放充电器上充会儿电就好了。</p><hr><h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>目前为止有<strong>三种解决方案</strong>，再来梳理一下：</p><ul><li>重启 Apple Watch（只能短暂解决，后续还可能会出现相同的问题，需要再次重启）</li><li>关闭噪声app中的环境音量测量（在watch设置-噪声中） </li><li>出现该问题时，将手表放到充电器上充电5分钟，可以恢复</li></ul><p>其中，第一种只能<strong>短暂地解决该问题</strong>，第二种能<strong>缓解该问题</strong>，第三种也<strong>只能作为一种补救措施</strong>。</p><p>我的建议是：<strong>第二第三种搭配使用</strong>。</p><p><em><strong>苹果那边已经反馈过去了</strong></em>，正在等待 watchOS 9.0.1或者 watchOS 9.1解决这个问题。</p><blockquote><p>奇怪的是，</p><p>用第二种关闭了环境音量检测后，仍然可以在健康app里查看到环境噪声分贝的信息，</p><p>而且数据还是手表提供的</p><p><img src="/img/apple-watch-series-8-mic-failed/noise-disabled-health-app.jpeg" alt="绝对是Bug"></p></blockquote><p><del>真垃圾！</del></p>]]></content>
     
