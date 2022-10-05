@@ -6,7 +6,7 @@
   <link href="https://liyanan2004.github.io/atom.xml" rel="self"/>
   
   <link href="https://liyanan2004.github.io/"/>
-  <updated>2022-10-04T13:39:17.621Z</updated>
+  <updated>2022-10-05T07:49:36.048Z</updated>
   <id>https://liyanan2004.github.io/</id>
   
   <author>
@@ -15,6 +15,38 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>JsDelivr不灵了？淦！</title>
+    <link href="https://liyanan2004.github.io/jsdelivr-can-no-longer-accelerate-static-resources/"/>
+    <id>https://liyanan2004.github.io/jsdelivr-can-no-longer-accelerate-static-resources/</id>
+    <published>2022-10-05T07:03:05.022Z</published>
+    <updated>2022-10-05T07:49:36.048Z</updated>
+    
+    <content type="html"><![CDATA[<p>还记得几年前做博客的时候，</p><p>图片上传到 GitHub 上，</p><p>用 JsDelivr 拉取 GitHub 上的静态资源，</p><p>速度嘎嘎快，</p><p>但是最近发现，</p><p>静态资源貌似都被重定向到 githubusercontent 上去了，</p><p><strong>可是，官网上却写着：</strong></p><p><img src="/img/jsdelivr-can-no-longer-accelerate-static-resources/important-in-china.jpeg"></p><span id="more"></span><h2 id="DNS-被污染"><a href="#DNS-被污染" class="headerlink" title="DNS 被污染"></a>DNS 被污染</h2><p>GitHub 上的 issue：</p><blockquote><p>Jsdelivr has been block again in China. Some places are polluted by DNS and are resolved to the IP of websites such as Facebook, Twitter, etc. Although other places can be resolved to the correct IP, they are reset by GWF during the TLS handshake and still inaccessible.<br>But fortunately, <code>fastly.jsdelivr.net</code> is not polluted at present.</p></blockquote><p>至于原因，</p><p>估计是某些人把非法的东西挂到 GitHub 上面去分享，</p><p>用 JsDelivr 去正常访问，</p><p>钻空子别发现了 哈哈。</p><article class="message is-success">                <div class="message-body">            <p>不过好在 DNS 污染已经被解决，但是在大陆地区也增加了许多限制了，来保证不会再次被污染。</p>        </div>    </article><h2 id="有什么影响？"><a href="#有什么影响？" class="headerlink" title="有什么影响？"></a>有什么影响？</h2><p><strong>DNS解析</strong>现在已经恢复正常，</p><p>但是国内的 ICP 应该是不可能恢复了，</p><p>JsDelivr 也不再提供 <strong>中国大陆地区</strong> 的 GitHub 静态资源的加速，（JS CSS 类文件除外）</p><p>所以博客内的图片也只能从 GitHub 拉取了，</p><p>导致<strong>网站加载时间可能会略长</strong>。</p><article class="message is-warning">        <div class="message-header"><p>6月份的时候国内静态资源已经不给访问了</p></div>        <div class="message-body">            <p>中国仅此一家合法的公共 CDN 就这么被限制了。</p><p>ICP也被吊销了。</p><p>淦！！ </p>        </div>    </article><article class="message is-dark">        <div class="message-header"><p>怎么办呢？</p></div>        <div class="message-body">            <p>我也在寻找更优的解决方案来加速页面加载。</p><p>后续可能考虑从 GitHub 转到国内的 Gitee</p>        </div>    </article>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;还记得几年前做博客的时候，&lt;/p&gt;
+&lt;p&gt;图片上传到 GitHub 上，&lt;/p&gt;
+&lt;p&gt;用 JsDelivr 拉取 GitHub 上的静态资源，&lt;/p&gt;
+&lt;p&gt;速度嘎嘎快，&lt;/p&gt;
+&lt;p&gt;但是最近发现，&lt;/p&gt;
+&lt;p&gt;静态资源貌似都被重定向到 githubusercontent 上去了，&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;可是，官网上却写着：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/img/jsdelivr-can-no-longer-accelerate-static-resources/important-in-china.jpeg&quot;&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="吐个槽" scheme="https://liyanan2004.github.io/categories/%E5%90%90%E4%B8%AA%E6%A7%BD/"/>
+    
+    
+    <category term="Web" scheme="https://liyanan2004.github.io/tags/Web/"/>
+    
+    <category term="JS" scheme="https://liyanan2004.github.io/tags/JS/"/>
+    
+    <category term="CDN" scheme="https://liyanan2004.github.io/tags/CDN/"/>
+    
+  </entry>
   
   <entry>
     <title>新手表居然就卡bug？watchOS 9 太拉了...</title>
