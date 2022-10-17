@@ -6,7 +6,7 @@
   <link href="https://liyanan2004.github.io/atom.xml" rel="self"/>
   
   <link href="https://liyanan2004.github.io/"/>
-  <updated>2022-10-14T03:02:58.280Z</updated>
+  <updated>2022-10-17T09:34:56.949Z</updated>
   <id>https://liyanan2004.github.io/</id>
   
   <author>
@@ -15,6 +15,39 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>记录下 MarkdownView 的性能优化</title>
+    <link href="https://liyanan2004.github.io/markdownview-performance-optimization/"/>
+    <id>https://liyanan2004.github.io/markdownview-performance-optimization/</id>
+    <published>2022-10-16T14:03:33.656Z</published>
+    <updated>2022-10-17T09:34:56.949Z</updated>
+    
+    <content type="html"><![CDATA[<p>我的开源项目 MarkdownView 的 <strong><a href="https://github.com/LiYanan2004/MarkdownView/releases/tag/0.2.0">0.2.0 版本</a></strong> 终于发布了！</p><p>改版本带来了性能上的巨大进步：</p><blockquote><h2 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a>Performance</h2><ul><li>Rendering is now <strong>at least 3x faster on ALL DEVICES</strong>.</li><li>Real-time previewing is now much much smoother.</li><li>Scrolling is much quicker and smoother <strong>with no frame drop</strong>.</li><li>Memory usage has been reduced by 30%</li></ul></blockquote><p>借此机会，记录下我的优化思路。</p><span id="more"></span><h2 id="前期表现"><a href="#前期表现" class="headerlink" title="前期表现"></a>前期表现</h2><ul><li>启动、初次渲染耗时长</li><li>渲染完成后上下滚动的时候掉帧严重（使用懒加载模式）</li><li>渲染完成后上下滚动的时候内存占用量太大了（关闭了懒加载模式）</li><li>用作“实时预览”的时候会卡，导致输入体验很糟糕</li></ul><p>综合以上表现，新功能部分也已经定型了，所以决定好好优化下性能，</p><p>至少在我这台 2019 款的 MacBook Pro 上不要有明显的卡顿吧…</p><h2 id="渲染性能优化"><a href="#渲染性能优化" class="headerlink" title="渲染性能优化"></a>渲染性能优化</h2><h3 id="定位问题"><a href="#定位问题" class="headerlink" title="定位问题"></a>定位问题</h3><p>我想先来介绍下 MarkdownView 的整套渲染流程，</p><p>如图所示：</p><p><img src="/img/markdownview-performance-optimization/how-to-render.jpeg"></p><p>本来以为是<del>在最后整合的时候 Layout 反复运算导致速度慢</del>，</p><p>最后我用我第一篇博客测试了下，启动渲染居然需要 20s，</p><p>属于是完全卡住的感觉，在 Xcode 中能看到 CPU 占用持续在 100% 左右，</p><p>最后定位到 <strong>分词模块</strong> 耗费了大量 CPU 时间，</p><p>这就是优化的重点了！！</p><h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>分词模块的作用是保证文本都能以很短的形式呈现，</p><p>用于实现<strong>合理的</strong>自动换行，</p><p>但是分词模块依赖 Natural Language 框架进行分词，</p><p>本质上就是机器学习的分词，需要时间来完成，</p><p>同时所有的代码都是 <strong>同步执行（sync）</strong> 的，</p><p>上一个结束了才会执行下一个，</p><p>段落一多，大量的时间都被浪费在一段段分词了。</p><h3 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h3><ul><li><strong>异步执行（async）</strong>所有的分词操作，这样可以<strong>让所有段落的分词同时开始</strong></li></ul><p><img src="/img/markdownview-performance-optimization/sync-and-async-clocks.jpeg"></p><ul><li>文本渲染使用单独的 <code>TextView</code> 来渲染，<strong>默认显示空白等待分词结束后自动排版</strong></li></ul><p>还是用我的第一篇博客作为测试，加载速度从 20s 缩短到了 1s，内存占用也下降了 20%。</p><p><strong>这也是我为什么会在新版中弃用 懒加载 (Lazy Loading) 的主要原因。</strong></p><h2 id="实时预览性能优化"><a href="#实时预览性能优化" class="headerlink" title="实时预览性能优化"></a>实时预览性能优化</h2><h3 id="定位问题-1"><a href="#定位问题-1" class="headerlink" title="定位问题"></a>定位问题</h3><p>这里的问题具体表现在当我连续输入文本的时候，</p><p>CPU占用高，并且伴随 <strong>输入框</strong> 也很卡顿。</p><h3 id="问题分析-1"><a href="#问题分析-1" class="headerlink" title="问题分析"></a>问题分析</h3><p>接着上面的思路，</p><p>每次有微小变动的时候，MarkdownView 都会重新走整套流程，</p><p>本以为是异步处理得过于频繁导致卡顿，</p><p><del>于是就用Combine做了debounce处理，<strong>在输入间隙执行重新渲染</strong>，</del></p><p>问题没有解决，</p><p>而且，中文输入就没有问题，</p><p>重新考虑了下 渲染流程 和 SwiftUI 刷新机制，</p><p>每次有变动的时候，都要重新进入解析流程，</p><h4 id="英文"><a href="#英文" class="headerlink" title="英文"></a>英文</h4><p>不论是多打一个字母或是删除一个字母，都会重解析，</p><h4 id="中文"><a href="#中文" class="headerlink" title="中文"></a>中文</h4><p>输入拼音时本质上还没有让文本改变，不会重解析，</p><p>只有拼音转成文本之后，统一进行一次重解析，</p><p>So，</p><p>在英文状态下，过于频繁的重解析是导致卡顿的“罪魁祸首”。</p><h3 id="解决思路-1"><a href="#解决思路-1" class="headerlink" title="解决思路"></a>解决思路</h3><ul><li>对于一开始的文本输入做 debounce 处理，<strong>在输入间隙执行重解析、重渲染</strong>。</li></ul><p>这样一来，在连续输入字符的时候不会每一次都执行重新解析和渲染，</p><p>只有在我输入时的停顿处，才会刷新整个文档，执行一次重渲染，</p><p>这样既保证了预览的实时性，也提升了整体性能。</p><blockquote><h4 id="做了debounce延迟，怎么保证预览的实时性？"><a href="#做了debounce延迟，怎么保证预览的实时性？" class="headerlink" title="做了debounce延迟，怎么保证预览的实时性？"></a><strong>做了debounce延迟，怎么保证预览的实时性？</strong></h4><p>在真正地连续快速输入的情况下，是不会去看预览的</p><p>但凡少许停顿了下（0.3s），MarkdownView就已经自动刷新完成了</p><p>避免了在快速输入时，频繁地做无用的刷新</p></blockquote><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在开发过程中，需要注意：</p><p>对于一些比较耗时的部分（比如：下载、大量机器学习预测…）使用异步（async）来完成，</p><p>在 UI 出现问题时，关注下 UI 是如何刷新的，</p><p>看看是不是有过多繁杂的任务，</p><p>重新思考下现实中的逻辑，可以试着降低他们的优先级，</p><p>浓缩一下就是：<strong>主线程（main thread）不要有过多连续繁杂且无用的运算！！</strong></p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;我的开源项目 MarkdownView 的 &lt;strong&gt;&lt;a href=&quot;https://github.com/LiYanan2004/MarkdownView/releases/tag/0.2.0&quot;&gt;0.2.0 版本&lt;/a&gt;&lt;/strong&gt; 终于发布了！&lt;/p&gt;
+&lt;p&gt;改版本带来了性能上的巨大进步：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;h2 id=&quot;Performance&quot;&gt;&lt;a href=&quot;#Performance&quot; class=&quot;headerlink&quot; title=&quot;Performance&quot;&gt;&lt;/a&gt;Performance&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;Rendering is now &lt;strong&gt;at least 3x faster on ALL DEVICES&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Real-time previewing is now much much smoother.&lt;/li&gt;
+&lt;li&gt;Scrolling is much quicker and smoother &lt;strong&gt;with no frame drop&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Memory usage has been reduced by 30%&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;借此机会，记录下我的优化思路。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="瞎折腾" scheme="https://liyanan2004.github.io/categories/%E7%9E%8E%E6%8A%98%E8%85%BE/"/>
+    
+    
+    <category term="Swift" scheme="https://liyanan2004.github.io/tags/Swift/"/>
+    
+    <category term="代码调优" scheme="https://liyanan2004.github.io/tags/%E4%BB%A3%E7%A0%81%E8%B0%83%E4%BC%98/"/>
+    
+  </entry>
   
   <entry>
     <title>ASCII码对应关系</title>
@@ -92,11 +125,11 @@
     <category term="吐个槽" scheme="https://liyanan2004.github.io/categories/%E5%90%90%E4%B8%AA%E6%A7%BD/"/>
     
     
-    <category term="CDN" scheme="https://liyanan2004.github.io/tags/CDN/"/>
+    <category term="Web" scheme="https://liyanan2004.github.io/tags/Web/"/>
     
     <category term="JS" scheme="https://liyanan2004.github.io/tags/JS/"/>
     
-    <category term="Web" scheme="https://liyanan2004.github.io/tags/Web/"/>
+    <category term="CDN" scheme="https://liyanan2004.github.io/tags/CDN/"/>
     
   </entry>
   
@@ -160,11 +193,11 @@
     
     <category term="写代码" scheme="https://liyanan2004.github.io/tags/%E5%86%99%E4%BB%A3%E7%A0%81/"/>
     
-    <category term="JS" scheme="https://liyanan2004.github.io/tags/JS/"/>
+    <category term="IP定位" scheme="https://liyanan2004.github.io/tags/IP%E5%AE%9A%E4%BD%8D/"/>
     
     <category term="Web" scheme="https://liyanan2004.github.io/tags/Web/"/>
     
-    <category term="IP定位" scheme="https://liyanan2004.github.io/tags/IP%E5%AE%9A%E4%BD%8D/"/>
+    <category term="JS" scheme="https://liyanan2004.github.io/tags/JS/"/>
     
     <category term="Leancloud" scheme="https://liyanan2004.github.io/tags/Leancloud/"/>
     
