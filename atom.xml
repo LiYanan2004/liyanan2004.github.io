@@ -6,7 +6,7 @@
   <link href="https://liyanan2004.github.io/atom.xml" rel="self"/>
   
   <link href="https://liyanan2004.github.io/"/>
-  <updated>2022-10-17T09:34:56.949Z</updated>
+  <updated>2022-11-08T15:23:03.634Z</updated>
   <id>https://liyanan2004.github.io/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>macOS 开发 -- URL 访问权限持久化（基于 Sandbox）</title>
+    <link href="https://liyanan2004.github.io/sandbox-url-persistence/"/>
+    <id>https://liyanan2004.github.io/sandbox-url-persistence/</id>
+    <published>2022-11-08T14:09:58.698Z</published>
+    <updated>2022-11-08T15:23:03.634Z</updated>
+    
+    <content type="html"><![CDATA[<p>好久不见，最近有在好好学习哈哈，</p><p>今天来分享下基于 Sandbox 的 URL 访问权限持久化的方案。</p><p>写这篇文章的起因是：</p><p>简单浏览了下 <strong><a href="https://github.com/Tencent/lemon-cleaner">Tencent&#x2F;lemon-cleaner</a></strong> 的部分源码，</p><p>发现他们用 Apple Script 调用 Finder 操作文件，</p><p>这样很好地避免了权限问题，但是研究一番发现，<strong>没那么简单</strong>….</p><span id="more"></span><h2 id="Bookmark-大法"><a href="#Bookmark-大法" class="headerlink" title="Bookmark 大法"></a>Bookmark 大法</h2><p>这是我自己项目里使用的方法，</p><p>好处在于文件操作很自然， 不会让用户觉得自己的数据可以被随便乱翻（事实也确实是这样的）</p><ol><li><p>将 App Sandbox –&gt; File Access 内的 <code>User Selected File</code> 改为 <code>Read/Write</code></p></li><li><p>在项目的 entitlements 文件中添加这样一项 <code>com.apple.security.files.bookmarks.app-scope</code>，设置为<code>YES</code></p></li><li><p>使用 NSOpenPannel &#x2F; NSSavePannel 选择需要访问的文件（夹）</p></li></ol><blockquote><p>在 SwiftUI 中直接用 .fileImporter 之类的 modifer 就行</p><p>这样就拿到了用户选择的 URL 啦，因为是用户选择的，<strong>目前这个 URL 是有权访问的</strong></p><p><strong>注意，是目前，重启 app 就不行了</strong></p><p>因此我们需要把权限持久化。</p></blockquote><ol start="4"><li>保存 URL 的 bookmark</li></ol><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AppStorage</span>(<span class="string">&quot;bookmark&quot;</span>) <span class="keyword">private</span> <span class="keyword">var</span> bookmark: <span class="type">Data</span>?</span><br></pre></td></tr></table></figure><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span> &#123;</span><br><span class="line">bookmark <span class="operator">=</span> <span class="keyword">try</span> url.bookmarkData(options: .withSecurityScope)</span><br><span class="line">&#125; <span class="keyword">catch</span> &#123; </span><br><span class="line">  <span class="built_in">print</span>(error.localizedDescription) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ol start="5"><li>（app 重启后）再次访问此 URL</li></ol><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">guard</span> <span class="keyword">let</span> bookmark <span class="keyword">else</span> &#123; <span class="keyword">throw</span> <span class="type">URLError</span>(.fileDoesNotExist) &#125;</span><br><span class="line"><span class="keyword">var</span> isStale <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line"><span class="keyword">let</span> url <span class="operator">=</span> <span class="keyword">try</span> <span class="type">URL</span>(resolvingBookmarkData: bookmark, options: .withSecurityScope, relativeTo: <span class="literal">nil</span>, bookmarkDataIsStale: <span class="operator">&amp;</span>isStale)</span><br><span class="line">url.startAccessingSecurityScopedResource()</span><br><span class="line"><span class="comment">// Do some file-related works like move, duplicate, etc.</span></span><br><span class="line"><span class="comment">// try? FileManager.default.moveItem(at: a, to: b)</span></span><br><span class="line">url.stopAccessingSecurityScopedResource()</span><br></pre></td></tr></table></figure><blockquote><h3 id="start-和-stop-一定要成对！！"><a href="#start-和-stop-一定要成对！！" class="headerlink" title="start 和 stop 一定要成对！！"></a>start 和 stop 一定要成对！！</h3><p>这里属于是访问系统敏感数据，如果不及时 stop 的话系统可能会对 app 的权限做限制，</p><p>因此不能滥用，这就是 Sandbox 为什么安全、让人放心的原因了。</p><p><code>url.startAccessingSecurityScopedResource()</code> 也会返回一个布尔值，告诉你你是否真的可以这里的数据了，如果为 <code>true</code> 才能算成功。</p></blockquote><h2 id="Apple-Script-大法"><a href="#Apple-Script-大法" class="headerlink" title="Apple Script 大法"></a>Apple Script 大法</h2><p>Apple Script 实际上是代替用户操作的一种脚本，本质上是代替了手动的操作而已，因此这里可以操作所有文件了，在沙盒环境下当然是不会默认允许的。</p><blockquote><p>如果启用了 Hardened Runtime，要先在里面启用 Apple Events，否则无法弹出请求框。</p></blockquote><h3 id="非-Sandbox"><a href="#非-Sandbox" class="headerlink" title="非 Sandbox"></a>非 Sandbox</h3><p>如果在 非 Sandbox 环境下，只需要配置 <code>Privacy - AppleEvents Sending Usage Description</code> 告诉用户你执行的脚本的功能是干啥的就行。</p><p>然后就可以任意调用 applications了，例如，调用 Finder 来 move 文件之类的。</p><p>别慌！即使是非 Sandbox 也会有一步“自动化”授权的！</p><p><img src="/img/sandbox-url-persistence/automation-permission.png"></p><h3 id="Sandbox"><a href="#Sandbox" class="headerlink" title="Sandbox"></a>Sandbox</h3><p>在 Sandbox 环境下就会有限制了，不会让你能直接访问所有的 applications ，因为这可能会有潜在的恶意行为。</p><ol><li><p>你还是得配置 <code>Privacy - AppleEvents Sending Usage Description</code> 告诉用户你执行的脚本的功能是干啥的，</p></li><li><p>你在需要使用对应的 applications 之前需要去 entitlements 里提前声明。（用到几个写几个）</p></li></ol><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>com.apple.security.temporary-exception.apple-events<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">string</span>&gt;</span>com.apple.Finder<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br></pre></td></tr></table></figure><p>这样你就可以在 app 中使用 NSAppleScript 执行脚本了。</p><p><strong>否则，会报错 -600</strong></p><p><strong>因为是模拟用户操作的脚本，因此在移动文件、删除文件的时候都会有系统提示音哦～</strong></p><h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>目前我的项目中还是使用了 Bookmark 大法，更加简单，不会让用户觉得危险。</p><p>主要是 Apple Script 那些弹窗就蛮吓人了…</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;好久不见，最近有在好好学习哈哈，&lt;/p&gt;
+&lt;p&gt;今天来分享下基于 Sandbox 的 URL 访问权限持久化的方案。&lt;/p&gt;
+&lt;p&gt;写这篇文章的起因是：&lt;/p&gt;
+&lt;p&gt;简单浏览了下 &lt;strong&gt;&lt;a href=&quot;https://github.com/Tencent/lemon-cleaner&quot;&gt;Tencent&amp;#x2F;lemon-cleaner&lt;/a&gt;&lt;/strong&gt; 的部分源码，&lt;/p&gt;
+&lt;p&gt;发现他们用 Apple Script 调用 Finder 操作文件，&lt;/p&gt;
+&lt;p&gt;这样很好地避免了权限问题，但是研究一番发现，&lt;strong&gt;没那么简单&lt;/strong&gt;….&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="撸代码" scheme="https://liyanan2004.github.io/categories/%E6%92%B8%E4%BB%A3%E7%A0%81/"/>
+    
+    
+    <category term="Sandbox" scheme="https://liyanan2004.github.io/tags/Sandbox/"/>
+    
+    <category term="macOS" scheme="https://liyanan2004.github.io/tags/macOS/"/>
+    
+    <category term="Swift" scheme="https://liyanan2004.github.io/tags/Swift/"/>
+    
+  </entry>
   
   <entry>
     <title>记录下 MarkdownView 的性能优化</title>
@@ -125,11 +155,11 @@
     <category term="吐个槽" scheme="https://liyanan2004.github.io/categories/%E5%90%90%E4%B8%AA%E6%A7%BD/"/>
     
     
-    <category term="Web" scheme="https://liyanan2004.github.io/tags/Web/"/>
+    <category term="CDN" scheme="https://liyanan2004.github.io/tags/CDN/"/>
     
     <category term="JS" scheme="https://liyanan2004.github.io/tags/JS/"/>
     
-    <category term="CDN" scheme="https://liyanan2004.github.io/tags/CDN/"/>
+    <category term="Web" scheme="https://liyanan2004.github.io/tags/Web/"/>
     
   </entry>
   
@@ -193,11 +223,11 @@
     
     <category term="写代码" scheme="https://liyanan2004.github.io/tags/%E5%86%99%E4%BB%A3%E7%A0%81/"/>
     
-    <category term="IP定位" scheme="https://liyanan2004.github.io/tags/IP%E5%AE%9A%E4%BD%8D/"/>
+    <category term="JS" scheme="https://liyanan2004.github.io/tags/JS/"/>
     
     <category term="Web" scheme="https://liyanan2004.github.io/tags/Web/"/>
     
-    <category term="JS" scheme="https://liyanan2004.github.io/tags/JS/"/>
+    <category term="IP定位" scheme="https://liyanan2004.github.io/tags/IP%E5%AE%9A%E4%BD%8D/"/>
     
     <category term="Leancloud" scheme="https://liyanan2004.github.io/tags/Leancloud/"/>
     
