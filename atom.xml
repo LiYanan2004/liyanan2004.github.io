@@ -38,11 +38,11 @@
     <category term="撸代码" scheme="https://liyanan2004.github.io/categories/%E6%92%B8%E4%BB%A3%E7%A0%81/"/>
     
     
-    <category term="Swift" scheme="https://liyanan2004.github.io/tags/Swift/"/>
-    
     <category term="Sandbox" scheme="https://liyanan2004.github.io/tags/Sandbox/"/>
     
     <category term="macOS" scheme="https://liyanan2004.github.io/tags/macOS/"/>
+    
+    <category term="Swift" scheme="https://liyanan2004.github.io/tags/Swift/"/>
     
   </entry>
   
@@ -76,6 +76,32 @@
     <category term="Swift" scheme="https://liyanan2004.github.io/tags/Swift/"/>
     
     <category term="代码调优" scheme="https://liyanan2004.github.io/tags/%E4%BB%A3%E7%A0%81%E8%B0%83%E4%BC%98/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ASCII码对应关系</title>
+    <link href="https://liyanan2004.github.io/ascii/"/>
+    <id>https://liyanan2004.github.io/ascii/</id>
+    <published>2022-10-14T02:48:55.883Z</published>
+    <updated>2022-10-14T03:02:58.280Z</updated>
+    
+    <content type="html"><![CDATA[<article class="message is-warning">        <div class="message-header"><p>版权声明</p></div>        <div class="message-body">            <p>图片来源于<a href="https://baike.baidu.com/item/ASCII/309296">百度百科</a></p>        </div>    </article><p><img src="/img/ascii/table.jpeg"></p><h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><ol><li>大小写转换 <strong>±32</strong></li><li>A-Z &lt; a-z</li><li>字母范围：65-90，97-122</li><li>数字范围：48-57</li><li>“A”为65；“a”为97；“0”为 48</li><li><strong>ASCII 可输出 %d（字符的 ASCII 码的十进制数），也可输出 %c（对应的字符）。</strong></li></ol>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;article class=&quot;message is-warning&quot;&gt;
+        &lt;div class=&quot;message-header&quot;&gt;&lt;p&gt;版权声明&lt;/p&gt;
+&lt;/div&gt;
+        &lt;div class=&quot;message-body&quot;&gt;
+            &lt;</summary>
+      
+    
+    
+    
+    <category term="学个习" scheme="https://liyanan2004.github.io/categories/%E5%AD%A6%E4%B8%AA%E4%B9%A0/"/>
+    
     
   </entry>
   
