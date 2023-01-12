@@ -6,7 +6,7 @@
   <link href="https://liyanan2004.github.io/atom.xml" rel="self"/>
   
   <link href="https://liyanan2004.github.io/"/>
-  <updated>2023-01-01T07:05:27.761Z</updated>
+  <updated>2023-01-12T15:00:40.419Z</updated>
   <id>https://liyanan2004.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>记录一次  官方召回计划的维修</title>
+    <link href="https://liyanan2004.github.io/macbook-pro-keyboard-repair/"/>
+    <id>https://liyanan2004.github.io/macbook-pro-keyboard-repair/</id>
+    <published>2023-01-12T14:45:59.741Z</published>
+    <updated>2023-01-12T15:00:40.419Z</updated>
+    
+    <content type="html"><![CDATA[<p>还记得几年前苹果推出一项<a href="https://support.apple.com/zh-cn/keyboard-service-program-for-mac-notebooks">召回计划</a>，</p><p>所有使用了蝶式键盘的 MacBook 出现键盘问题都可以免费换键盘，</p><p>当时买电脑的时候买了 Apple Care+ </p><p>本想换块新电池，结果死活卡在 80% - 82%，</p><p>当时店员就跟我说让我留意键盘问题，保修时间是<strong>4年</strong></p><span id="more"></span><h2 id="具体表现"><a href="#具体表现" class="headerlink" title="具体表现"></a>具体表现</h2><p>键盘的 N 按下去没反应，需要大力出奇迹才能打出字母，</p><blockquote><p>按照惯例，第一时间录下视频作为证据</p><p>这种问题很有可能会在第二天自动恢复，我这里就是，所以要留下证据，非常重要‼️</p></blockquote><h2 id="预约维修"><a href="#预约维修" class="headerlink" title="预约维修"></a>预约维修</h2><p>第一次出现问题时没太在意，就录了个视频也就没管，</p><p>好巧不巧，前几天晚上又遇到了，赶紧预约了第二天的天才吧。</p><h2 id="跟天才吧的天才交流"><a href="#跟天才吧的天才交流" class="headerlink" title="跟天才吧的天才交流"></a>跟天才吧的天才交流</h2><p>当天早上，问题又“自动修复”了😂，所以说录视频很重要‼️，</p><p>天才吧里的天才按了很久也没能成功复现，但是也没有因此说电脑没问题（不像某品牌那么傲慢），</p><p>最后是把 N 键拆开之后直接触碰触点复现了一个我从来没有遇到的问题😂</p><p><strong>我遇到的问题是：按下去没反应</strong></p><p><strong>他测试出来的是：按下去之后反应两下😂</strong></p><p><img src="/img/macbook-pro-keyboard-repair/diagnose.png" alt="不愧是天才"></p><p>既然这样，那就维修呗，<strong>更换了整个键盘总成和上壳套件</strong>。</p><blockquote><p>包括 键盘、Touch Bar、Touch ID、触控板、掌托一直到USB-C的外壳 以及 电池。</p></blockquote><p>约等于 <strong>换了半台新电脑</strong>，</p><p>后面就是签个字，跑个诊断，就欧了～</p><p><img src="/img/macbook-pro-keyboard-repair/price.png"></p><blockquote><p>我的整个更换的周期是1天半。</p><p>新换的套件都带 90 天保修。</p><p>也总算是给我换到电池了！满血复活！！</p></blockquote><h2 id="谈谈售后"><a href="#谈谈售后" class="headerlink" title="谈谈售后"></a>谈谈售后</h2><p>售后的目的就是让消费者放心的去使用自己购买的产品，</p><p>如果你有潜在的质量问题，给予客户这样的召回保修是很有必要的，</p><p>之前我的 Apple Pencil 出现了插在 iPad 上反向充电（越充越少）的问题，</p><p>在现场不能复现，但是我录了视频，确实有这样的问题，他们也依然给我做了更换，</p><p>就觉得苹果在这方面做的特别好，真真切切的帮助客户尝试解决问题（更换之后也确实是没再出现过这个情况了），</p><p>但是这绝对不是意味着可以这样子去骗保，这是我的底线。</p><p>最近也在各大平台上也看到了华为拒保 Pocket S 屏幕质量问题的案例，</p><p>很多人明明没有认为损坏，就是一点点掉漆都被认定为人为损坏拒保了，</p><p><del>只能说，割韭菜割的真爽…</del></p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;还记得几年前苹果推出一项&lt;a href=&quot;https://support.apple.com/zh-cn/keyboard-service-program-for-mac-notebooks&quot;&gt;召回计划&lt;/a&gt;，&lt;/p&gt;
+&lt;p&gt;所有使用了蝶式键盘的 MacBook 出现键盘问题都可以免费换键盘，&lt;/p&gt;
+&lt;p&gt;当时买电脑的时候买了 Apple Care+ &lt;/p&gt;
+&lt;p&gt;本想换块新电池，结果死活卡在 80% - 82%，&lt;/p&gt;
+&lt;p&gt;当时店员就跟我说让我留意键盘问题，保修时间是&lt;strong&gt;4年&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="瞎折腾" scheme="https://liyanan2004.github.io/categories/%E7%9E%8E%E6%8A%98%E8%85%BE/"/>
+    
+    
+    <category term="Apple Store" scheme="https://liyanan2004.github.io/tags/Apple-Store/"/>
+    
+    <category term="Macbook Pro" scheme="https://liyanan2004.github.io/tags/Macbook-Pro/"/>
+    
+  </entry>
   
   <entry>
     <title>SwiftUI 中的 Conditional Scene</title>
