@@ -6,7 +6,7 @@
   <link href="https://liyanan2004.github.io/atom.xml" rel="self"/>
   
   <link href="https://liyanan2004.github.io/"/>
-  <updated>2023-04-23T04:28:35.299Z</updated>
+  <updated>2023-05-01T14:07:51.806Z</updated>
   <id>https://liyanan2004.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>用 Apple Script 打开任务栏菜单</title>
+    <link href="https://liyanan2004.github.io/open-menu-bar-extra-with-apple-script/"/>
+    <id>https://liyanan2004.github.io/open-menu-bar-extra-with-apple-script/</id>
+    <published>2023-05-01T13:50:45.901Z</published>
+    <updated>2023-05-01T14:07:51.806Z</updated>
+    
+    <content type="html"><![CDATA[<p>（本文大部分为 ChatGPT 生成）</p><p>如果你是一个苹果电脑的用户，你可能已经习惯了使用任务栏菜单来快速地打开应用程序和执行其他的任务。但是，有时候你可能会感到很繁琐，因为每次打开任务栏菜单都需要通过鼠标点击来完成。但是，你可能不知道的是，你可以使用Apple Script来打开任务栏菜单，并以更快的方式访问它。</p><p>Apple Script 是一种编程语言，它可以用来自动化和控制Mac电脑中的各种操作。使用Apple Script，你可以编写脚本来执行各种任务，包括打开应用程序、发送电子邮件、自动化工作流程等等。</p><span id="more"></span><h2 id="系统级菜单"><a href="#系统级菜单" class="headerlink" title="系统级菜单"></a>系统级菜单</h2><p>打开任务栏菜单是Apple Script的一项基本操作。下面是一个简单的示例脚本，用于打开任务栏菜单：</p><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">tell</span> <span class="built_in">application</span> <span class="string">&quot;System Events&quot;</span></span><br><span class="line">    <span class="keyword">tell</span> process <span class="string">&quot;SystemUIServer&quot;</span></span><br><span class="line">        click (menu bar <span class="built_in">item</span> <span class="number">1</span> <span class="keyword">of</span> menu bar <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">tell</span></span><br><span class="line"><span class="keyword">end</span> <span class="keyword">tell</span></span><br></pre></td></tr></table></figure><p>在这个脚本中，我们使用了Apple Script的 tell 语句，它允许我们控制不同的应用程序和进程。我们首先使用 tell 语句告诉Apple Script要控制的应用程序是“System Events”。然后，我们再次使用 tell 语句告诉Apple Script要控制的进程是“SystemUIServer”，这是负责任务栏菜单的进程。</p><p>在最后一行中，我们使用了 click 命令来模拟点击任务栏菜单。具体来说，我们使用了 menu bar item 1 of menu bar 1 这个命令来定位任务栏菜单的位置，并将其作为 click 命令的参数。</p><p>要运行这个脚本，你可以将其保存到脚本编辑器中，并点击运行按钮。当脚本运行时，它会自动打开任务栏菜单，让你快速访问你需要的应用程序和功能。</p><p>总的来说，使用Apple Script来打开任务栏菜单是一个简单而有效的方法，可以大大提高你的工作效率。如果你是一个苹果电脑的用户，不妨尝试使用这个脚本来自动化你的日常操作。</p><p>（以上是 AI 生成，接下来，我来补充）</p><h2 id="第三方-App"><a href="#第三方-App" class="headerlink" title="第三方 App"></a>第三方 App</h2><p>如果你的系统是 macOS Ventura（其他系统的你可以尝试一下），那么 <code>tell process &quot;SystemUIServer&quot;</code> 只能获取到类似 Siri 这种的系统进程，</p><p>但是，我们的目标远不止如此。</p><p>想要控制第三方app，可以参考以下代码（代码由 ChatGPT 生成，并且实测可以实现我们的目标）：</p><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">tell</span> <span class="built_in">application</span> <span class="string">&quot;System Events&quot;</span></span><br><span class="line">    <span class="keyword">tell</span> process <span class="string">&quot;APP名称&quot;</span></span><br><span class="line">        click menu bar <span class="built_in">item</span> <span class="number">1</span> <span class="keyword">of</span> menu bar <span class="number">2</span></span><br><span class="line">        <span class="comment">-- 点击第一个菜单项</span></span><br><span class="line">        click menu <span class="built_in">item</span> <span class="number">1</span> <span class="keyword">of</span> menu <span class="number">1</span> <span class="keyword">of</span> menu bar <span class="built_in">item</span> <span class="number">1</span> <span class="keyword">of</span> menu bar <span class="number">2</span></span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">tell</span></span><br><span class="line"><span class="keyword">end</span> <span class="keyword">tell</span></span><br></pre></td></tr></table></figure><blockquote><p>这里记得吧 “APP名称” 改下即可</p><p>这一部分我确实是不太会，问的 ChatGPT，它真的能给我正确的答案😱</p></blockquote><p>理论上如果 App 是原生实现的（AppKit，SwiftUI，Catalyst 这种），都能用 Apple Script 控制，</p><p>可以用 <code>entire contents</code> 来打印出所有的内容，然后逐一查找，</p><p>网页套壳的（基于 Electron 框架，例如：新版QQ，抖音，B站这种）就算了。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;（本文大部分为 ChatGPT 生成）&lt;/p&gt;
+&lt;p&gt;如果你是一个苹果电脑的用户，你可能已经习惯了使用任务栏菜单来快速地打开应用程序和执行其他的任务。但是，有时候你可能会感到很繁琐，因为每次打开任务栏菜单都需要通过鼠标点击来完成。但是，你可能不知道的是，你可以使用Apple Script来打开任务栏菜单，并以更快的方式访问它。&lt;/p&gt;
+&lt;p&gt;Apple Script 是一种编程语言，它可以用来自动化和控制Mac电脑中的各种操作。使用Apple Script，你可以编写脚本来执行各种任务，包括打开应用程序、发送电子邮件、自动化工作流程等等。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="瞎折腾" scheme="https://liyanan2004.github.io/categories/%E7%9E%8E%E6%8A%98%E8%85%BE/"/>
+    
+    
+    <category term="Apple Script" scheme="https://liyanan2004.github.io/tags/Apple-Script/"/>
+    
+  </entry>
   
   <entry>
     <title>WWDC 23 Swift Student Challenge</title>
@@ -556,40 +579,6 @@
     <category term="JS" scheme="https://liyanan2004.github.io/tags/JS/"/>
     
     <category term="CDN" scheme="https://liyanan2004.github.io/tags/CDN/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>新手表居然就卡bug？watchOS 9 太拉了...</title>
-    <link href="https://liyanan2004.github.io/apple-watch-series-8-mic-failed/"/>
-    <id>https://liyanan2004.github.io/apple-watch-series-8-mic-failed/</id>
-    <published>2022-10-03T08:47:08.200Z</published>
-    <updated>2022-10-12T14:18:21.445Z</updated>
-    
-    <content type="html"><![CDATA[<article class="message is-success">                <div class="message-body">            <p>此问题已在 watchOS 9.0.2 中修复。</p>        </div>    </article><p>如图</p><p><img src="/img/apple-watch-series-8-mic-failed/mic-failed.jpeg"></p><span id="more"></span><h2 id="高高兴兴地开箱"><a href="#高高兴兴地开箱" class="headerlink" title="高高兴兴地开箱"></a>高高兴兴地开箱</h2><iframe src="//player.bilibili.com/player.html?aid=688692484&bvid=BV1924y1X7K3&cid=851355605&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe><p>你还可以：<a href="https://www.bilibili.com/video/BV1924y1X7K3?share_source=copy_web&vd_source=c883b3d27d636e08e40154e6f636d504"><strong>在B站观看</strong></a></p><hr><h2 id="麦克风开始抽风"><a href="#麦克风开始抽风" class="headerlink" title="麦克风开始抽风"></a>麦克风开始抽风</h2><p>刚刚激活，就…</p><p><img src="/img/apple-watch-series-8-mic-failed/mic-bug-wechat.jpeg" alt="刚激活就失灵了一次"></p><p>又陆陆续续失灵了几次，<strong>重启都能解决</strong>…</p><p><strong>发了条微博：<a href="https://weibo.com/6341527351/M6sL4c4RH">麦克风失灵</a></strong></p><p>评论来看，也有问题…</p><p><img src="/img/apple-watch-series-8-mic-failed/mic-bug-weibo-comments.jpeg"></p><p><strong>在论坛里也找到了一样的问题：<a href="https://discussionschinese.apple.com/thread/254207265?page=2">iwatch s8 麦克风高频率拾音故障</a></strong></p><blockquote><p><strong>吐槽下，iWatch是什么东西…懂，但是没有这个名字</strong></p></blockquote><hr><h2 id="复现问题-amp-amp-反馈问题"><a href="#复现问题-amp-amp-反馈问题" class="headerlink" title="复现问题 &amp;&amp; 反馈问题"></a>复现问题 &amp;&amp; 反馈问题</h2><p>觉得像是软件的 bug</p><p>打了个 400 电话，让我重新配对，</p><p><strong>肯定是没效果的啦！</strong></p><p>但是，</p><p>我感觉像是<strong>噪声</strong>app的环境音量检测出 bug 了，关掉之后，确实<em><strong>缓解了</strong></em>。</p><p>解决了，但是没有完全解决。</p><p>好在，</p><p>又发现了一个不用重启的解决方案，</p><p>放充电器上充会儿电就好了。</p><hr><h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>目前为止有<strong>三种解决方案</strong>，再来梳理一下：</p><ul><li>重启 Apple Watch（只能短暂解决，后续还可能会出现相同的问题，需要再次重启）</li><li>关闭噪声app中的环境音量测量（在watch设置-噪声中） </li><li>出现该问题时，将手表放到充电器上充电5分钟，可以恢复</li></ul><p>其中，第一种只能<strong>短暂地解决该问题</strong>，第二种能<strong>缓解该问题</strong>，第三种也<strong>只能作为一种补救措施</strong>。</p><p>我的建议是：<strong>第二第三种搭配使用</strong>。</p><p><em><strong>苹果那边已经反馈过去了</strong></em>，正在等待 watchOS 9.0.1或者 watchOS 9.1解决这个问题。</p><blockquote><p>奇怪的是，</p><p>用第二种关闭了环境音量检测后，仍然可以在健康app里查看到环境噪声分贝的信息，</p><p>而且数据还是手表提供的</p><p><img src="/img/apple-watch-series-8-mic-failed/noise-disabled-health-app.jpeg" alt="绝对是Bug"></p></blockquote><p><del>真垃圾！</del></p><h2 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h2><p>貌似苹果确认了 <a href="http://www.sycaijing.com/news/flash?id=125464">确认了这个问题的存在</a>，</p><p><del>但是不知道能不能找到问题的原因，</del></p><p><del>这决定了最终能不能修复这个bug。</del></p><article class="message is-success">        <div class="message-header"><p>2022.10.11</p></div>        <div class="message-body">            <p>watchOS 9.0.2 更新日志中写道：<strong>修复了部分 Apple Watch Series 8 和 Ultra 用户的麦克风音频中断的问题</strong></p><p>经过测试，重新打开“环境音量检测”后一整天都没再出现此问题了</p>        </div>    </article><p><img src="/img/apple-watch-series-8-mic-failed/bug-fixed.jpeg" alt="watchOS 9.0.2"></p>]]></content>
-    
-    
-    <summary type="html">&lt;article class=&quot;message is-success&quot;&gt;
-        
-        &lt;div class=&quot;message-body&quot;&gt;
-            &lt;p&gt;此问题已在 watchOS 9.0.2 中修复。&lt;/p&gt;
-
-        &lt;/div&gt;
-    &lt;/article&gt;
-
-&lt;p&gt;如图&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;/img/apple-watch-series-8-mic-failed/mic-failed.jpeg&quot;&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="吐个槽" scheme="https://liyanan2004.github.io/categories/%E5%90%90%E4%B8%AA%E6%A7%BD/"/>
-    
-    
-    <category term="bug" scheme="https://liyanan2004.github.io/tags/bug/"/>
-    
-    <category term="watchOS" scheme="https://liyanan2004.github.io/tags/watchOS/"/>
-    
-    <category term="Apple Watch" scheme="https://liyanan2004.github.io/tags/Apple-Watch/"/>
     
   </entry>
   
