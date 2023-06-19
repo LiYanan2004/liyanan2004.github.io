@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>记录下 MarkdownView 的性能优化 - LiYanan2004 - 我的博客</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="LiYanan2004 - 我的博客"><meta name="msapplication-TileImage" content="/icons/touch-icon-iphone.jpeg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="LiYanan2004 - 我的博客"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" sizes="144x144" href="/icons/touch-icon-iphone.jpeg"><link rel="apple-touch-icon" sizes="152x152" href="/icons/touch-icon-ipad.jpeg"><link rel="apple-touch-icon" sizes="72x72" href="/icons/favicon.ico"><link rel="apple-touch-icon" sizes="96x96" href="/icons/favicon.ico"><link rel="apple-touch-icon" sizes="128x128" href="/icons/favicon.ico"><link rel="apple-touch-icon" sizes="256x256" href="/icons/favicon.ico"><meta name="description" content="我的开源项目 MarkdownView 的 0.2.0 版本 终于发布了！ 改版本带来了性能上的巨大进步：  Performance Rendering is now at least 3x faster on ALL DEVICES. Real-time previewing is now much much smoother. Scrolling is much quicker and smo"><meta property="og:type" content="blog"><meta property="og:title" content="记录下 MarkdownView 的性能优化"><meta property="og:url" content="https://liyanan2004.github.io/markdownview-performance-optimization/"><meta property="og:site_name" content="LiYanan2004 - 我的博客"><meta property="og:description" content="我的开源项目 MarkdownView 的 0.2.0 版本 终于发布了！ 改版本带来了性能上的巨大进步：  Performance Rendering is now at least 3x faster on ALL DEVICES. Real-time previewing is now much much smoother. Scrolling is much quicker and smo"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://liyanan2004.github.io/img/markdownview-performance-optimization/how-to-render.jpeg"><meta property="og:image" content="https://liyanan2004.github.io/img/markdownview-performance-optimization/sync-and-async-clocks.jpeg"><meta property="article:published_time" content="2022-10-16T14:03:33.656Z"><meta property="article:modified_time" content="2023-01-01T07:08:06.232Z"><meta property="article:author" content="LiYanan"><meta property="article:tag" content="Swift"><meta property="article:tag" content="代码调优"><meta property="article:tag" content="SwiftUI"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://liyanan2004.github.io/img/markdownview-performance-optimization/how-to-render.jpeg"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://liyanan2004.github.io/markdownview-performance-optimization/"},"headline":"记录下 MarkdownView 的性能优化","image":[],"datePublished":"2022-10-16T14:03:33.656Z","dateModified":"2023-01-01T07:08:06.232Z","author":{"@type":"Person","name":"LiYanan"},"publisher":{"@type":"Organization","name":"LiYanan2004 - 我的博客","logo":{"@type":"ImageObject","url":"https://liyanan2004.github.io/icons/icon.png"}},"description":"我的开源项目 MarkdownView 的 0.2.0 版本 终于发布了！ 改版本带来了性能上的巨大进步：  Performance Rendering is now at least 3x faster on ALL DEVICES. Real-time previewing is now much much smoother. Scrolling is much quicker and smo"}</script><link rel="canonical" href="https://liyanan2004.github.io/markdownview-performance-optimization/"><link rel="alternate" href="/atom.xml" title="LiYanan2004 - 我的博客" type="application/atom+xml"><link rel="icon" href="/icons/icon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/6.0.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><meta name="follow.it-verification-code" content="K7a6qPhqDkfhuFV53Met"><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const $tabMenu = document.querySelector(`a[href="${location.hash}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(location.hash);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/icons/icon.png" alt="LiYanan2004 - 我的博客" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/archives">时间线</a><a class="navbar-item" href="/photos">相册</a><a class="navbar-item" href="/about">关于我</a><a class="navbar-item" href="/messages">留言板</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Chat_with_ME" href="/talk-with-me"><i class="fa fa-comments"></i></a><a class="navbar-item" target="_blank" rel="noopener" title="GitHub" href="https://github.com/LiYanan2004"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2022-10-16T14:03:33.656Z" title="2022/10/16 22:03:33">2022-10-16</time>发表</span><span class="level-item"><time dateTime="2023-01-01T07:08:06.232Z" title="2023/1/1 15:08:06">2023-01-01</time>更新</span><span class="level-item"><a class="link-muted" href="/categories/%E6%92%B8%E4%BB%A3%E7%A0%81/">撸代码</a></span><span class="level-item">8 分钟读完 (大约1266个字)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">记录下 MarkdownView 的性能优化</h1><div class="content"><p>我的开源项目 MarkdownView 的 <strong><a target="_blank" rel="noopener" href="https://github.com/LiYanan2004/MarkdownView/releases/tag/0.2.0">0.2.0 版本</a></strong> 终于发布了！</p>
+<p>改版本带来了性能上的巨大进步：</p>
+<blockquote>
+<h2 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a>Performance</h2><ul>
+<li>Rendering is now <strong>at least 3x faster on ALL DEVICES</strong>.</li>
+<li>Real-time previewing is now much much smoother.</li>
+<li>Scrolling is much quicker and smoother <strong>with no frame drop</strong>.</li>
+<li>Memory usage has been reduced by 30%</li>
+</ul>
+</blockquote>
+<p>借此机会，记录下我的优化思路。</p>
+<span id="more"></span>
+
+<h2 id="前期表现"><a href="#前期表现" class="headerlink" title="前期表现"></a>前期表现</h2><ul>
+<li>启动、初次渲染耗时长</li>
+<li>渲染完成后上下滚动的时候掉帧严重（使用懒加载模式）</li>
+<li>渲染完成后上下滚动的时候内存占用量太大了（关闭了懒加载模式）</li>
+<li>用作“实时预览”的时候会卡，导致输入体验很糟糕</li>
+</ul>
+<p>综合以上表现，新功能部分也已经定型了，所以决定好好优化下性能，</p>
+<p>至少在我这台 2019 款的 MacBook Pro 上不要有明显的卡顿吧…</p>
+<h2 id="渲染性能优化"><a href="#渲染性能优化" class="headerlink" title="渲染性能优化"></a>渲染性能优化</h2><h3 id="定位问题"><a href="#定位问题" class="headerlink" title="定位问题"></a>定位问题</h3><p>我想先来介绍下 MarkdownView 的整套渲染流程，</p>
+<p>如图所示：</p>
+<p><img src="/img/markdownview-performance-optimization/how-to-render.jpeg"></p>
+<p>本来以为是<del>在最后整合的时候 Layout 反复运算导致速度慢</del>，</p>
+<p>最后我用我第一篇博客测试了下，启动渲染居然需要 20s，</p>
+<p>属于是完全卡住的感觉，在 Xcode 中能看到 CPU 占用持续在 100% 左右，</p>
+<p>最后定位到 <strong>分词模块</strong> 耗费了大量 CPU 时间，</p>
+<p>这就是优化的重点了！！</p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>分词模块的作用是保证文本都能以很短的形式呈现，</p>
+<p>用于实现<strong>合理的</strong>自动换行，</p>
+<p>但是分词模块依赖 Natural Language 框架进行分词，</p>
+<p>本质上就是机器学习的分词，需要时间来完成，</p>
+<p>同时所有的代码都是 <strong>同步执行（sync）</strong> 的，</p>
+<p>上一个结束了才会执行下一个，</p>
+<p>段落一多，大量的时间都被浪费在一段段分词了。</p>
+<h3 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h3><ul>
+<li><strong>异步执行（async）</strong>所有的分词操作，这样可以<strong>让所有段落的分词同时开始</strong></li>
+</ul>
+<p><img src="/img/markdownview-performance-optimization/sync-and-async-clocks.jpeg"></p>
+<ul>
+<li>文本渲染使用单独的 <code>TextView</code> 来渲染，<strong>默认显示空白等待分词结束后自动排版</strong></li>
+</ul>
+<p>还是用我的第一篇博客作为测试，加载速度从 20s 缩短到了 1s，内存占用也下降了 20%。</p>
+<p><strong>这也是我为什么会在新版中弃用 懒加载 (Lazy Loading) 的主要原因。</strong></p>
+<h2 id="实时预览性能优化"><a href="#实时预览性能优化" class="headerlink" title="实时预览性能优化"></a>实时预览性能优化</h2><h3 id="定位问题-1"><a href="#定位问题-1" class="headerlink" title="定位问题"></a>定位问题</h3><p>这里的问题具体表现在当我连续输入文本的时候，</p>
+<p>CPU占用高，并且伴随 <strong>输入框</strong> 也很卡顿。</p>
+<h3 id="问题分析-1"><a href="#问题分析-1" class="headerlink" title="问题分析"></a>问题分析</h3><p>接着上面的思路，</p>
+<p>每次有微小变动的时候，MarkdownView 都会重新走整套流程，</p>
+<p>本以为是异步处理得过于频繁导致卡顿，</p>
+<p><del>于是就用Combine做了debounce处理，<strong>在输入间隙执行重新渲染</strong>，</del></p>
+<p>问题没有解决，</p>
+<p>而且，中文输入就没有问题，</p>
+<p>重新考虑了下 渲染流程 和 SwiftUI 刷新机制，</p>
+<p>每次有变动的时候，都要重新进入解析流程，</p>
+<h4 id="英文"><a href="#英文" class="headerlink" title="英文"></a>英文</h4><p>不论是多打一个字母或是删除一个字母，都会重解析，</p>
+<h4 id="中文"><a href="#中文" class="headerlink" title="中文"></a>中文</h4><p>输入拼音时本质上还没有让文本改变，不会重解析，</p>
+<p>只有拼音转成文本之后，统一进行一次重解析，</p>
+<p>So，</p>
+<p>在英文状态下，过于频繁的重解析是导致卡顿的“罪魁祸首”。</p>
+<h3 id="解决思路-1"><a href="#解决思路-1" class="headerlink" title="解决思路"></a>解决思路</h3><ul>
+<li>对于一开始的文本输入做 debounce 处理，<strong>在输入间隙执行重解析、重渲染</strong>。</li>
+</ul>
+<p>这样一来，在连续输入字符的时候不会每一次都执行重新解析和渲染，</p>
+<p>只有在我输入时的停顿处，才会刷新整个文档，执行一次重渲染，</p>
+<p>这样既保证了预览的实时性，也提升了整体性能。</p>
+<blockquote>
+<h4 id="做了debounce延迟，怎么保证预览的实时性？"><a href="#做了debounce延迟，怎么保证预览的实时性？" class="headerlink" title="做了debounce延迟，怎么保证预览的实时性？"></a><strong>做了debounce延迟，怎么保证预览的实时性？</strong></h4><p>在真正地连续快速输入的情况下，是不会去看预览的</p>
+<p>但凡少许停顿了下（0.3s），MarkdownView就已经自动刷新完成了</p>
+<p>避免了在快速输入时，频繁地做无用的刷新</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在开发过程中，需要注意：</p>
+<p>对于一些比较耗时的部分（比如：下载、大量机器学习预测…）使用异步（async）来完成，</p>
+<p>在 UI 出现问题时，关注下 UI 是如何刷新的，</p>
+<p>看看是不是有过多繁杂的任务，</p>
+<p>重新思考下现实中的逻辑，可以试着降低他们的优先级，</p>
+<p>浓缩一下就是：<strong>主线程（main thread）不要有过多连续繁杂且无用的运算！！</strong></p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>记录下 MarkdownView 的性能优化</p><p><a href="https://liyanan2004.github.io/markdownview-performance-optimization/">https://liyanan2004.github.io/markdownview-performance-optimization/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>LiYanan</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2022-10-16</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2023-01-01</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/Swift/">Swift</a><a class="link-muted mr-2" rel="tag" href="/tags/%E4%BB%A3%E7%A0%81%E8%B0%83%E4%BC%98/">代码调优</a><a class="link-muted mr-2" rel="tag" href="/tags/SwiftUI/">SwiftUI</a></div><!--!--></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/donates/alipay.jpeg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/donates/wechat.jpeg" alt="微信"></span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="afdian"><span class="icon is-small"><i class="fas fa-charging-station"></i></span><span>爱发电</span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/sandbox-url-persistence/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">macOS 开发 -- URL 访问权限持久化（基于 Sandbox）</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/ascii/"><span class="level-item">ASCII码对应关系</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div class="content" id="waline-thread"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@waline/client@2.6.3/dist/waline.css"><script src="https://cdn.jsdelivr.net/npm/@waline/client@2.6.3/dist/waline.js"></script><script>Waline.init({
+            el: '#waline-thread',
+            serverURL: "https://waline.liiiiblog-comment.ml",
+            path: window.location.pathname,
+            lang: "zh-CN",
+            locale: {"placeholder":"说点什么呗..."},
+            emoji: ["//unpkg.com/@waline/emojis@1.0.1/weibo"],
+            
+            meta: ["nick","mail","link"],
+            requiredMeta: [],
+            login: "disable",
+            
+            pageSize: 10,
+            
+            
+            
+            
+            pageview: false,
+            comment: false,
+            copyright: true,
+        });</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#Performance"><span class="level-left"><span class="level-item">1</span><span class="level-item">Performance</span></span></a></li><li><a class="level is-mobile" href="#前期表现"><span class="level-left"><span class="level-item">2</span><span class="level-item">前期表现</span></span></a></li><li><a class="level is-mobile" href="#渲染性能优化"><span class="level-left"><span class="level-item">3</span><span class="level-item">渲染性能优化</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#定位问题"><span class="level-left"><span class="level-item">3.1</span><span class="level-item">定位问题</span></span></a></li><li><a class="level is-mobile" href="#问题分析"><span class="level-left"><span class="level-item">3.2</span><span class="level-item">问题分析</span></span></a></li><li><a class="level is-mobile" href="#解决思路"><span class="level-left"><span class="level-item">3.3</span><span class="level-item">解决思路</span></span></a></li></ul></li><li><a class="level is-mobile" href="#实时预览性能优化"><span class="level-left"><span class="level-item">4</span><span class="level-item">实时预览性能优化</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#定位问题-1"><span class="level-left"><span class="level-item">4.1</span><span class="level-item">定位问题</span></span></a></li><li><a class="level is-mobile" href="#问题分析-1"><span class="level-left"><span class="level-item">4.2</span><span class="level-item">问题分析</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#英文"><span class="level-left"><span class="level-item">4.2.1</span><span class="level-item">英文</span></span></a></li><li><a class="level is-mobile" href="#中文"><span class="level-left"><span class="level-item">4.2.2</span><span class="level-item">中文</span></span></a></li></ul></li><li><a class="level is-mobile" href="#解决思路-1"><span class="level-left"><span class="level-item">4.3</span><span class="level-item">解决思路</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#做了debounce延迟，怎么保证预览的实时性？"><span class="level-left"><span class="level-item">4.3.1</span><span class="level-item">做了debounce延迟，怎么保证预览的实时性？</span></span></a></li></ul></li></ul></li><li><a class="level is-mobile" href="#总结"><span class="level-left"><span class="level-item">5</span><span class="level-item">总结</span></span></a></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/icons/icon.png" alt="LiYanan2004"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">LiYanan2004</p><p class="is-size-6 is-block">❤️ A Student of SUEP ❤️</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Shanghai, China</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">24</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">5</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">33</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/LiYanan2004" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/LiYanan2004"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Mail Me" href="mailto:snarl.airdrop.0m@icloud.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div></div></div><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/%E5%90%90%E4%B8%AA%E6%A7%BD/"><span class="level-start"><span class="level-item">吐个槽</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/categories/%E5%AD%A6%E4%B8%AA%E4%B9%A0/"><span class="level-start"><span class="level-item">学个习</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/categories/%E6%92%B8%E4%BB%A3%E7%A0%81/"><span class="level-start"><span class="level-item">撸代码</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile" href="/categories/%E6%96%B0%E7%8E%A9%E5%85%B7/"><span class="level-start"><span class="level-item">新玩具</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/%E7%9E%8E%E6%8A%98%E8%85%BE/"><span class="level-start"><span class="level-item">瞎折腾</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li></ul></div></div></div><div class="column-right-shadow is-hidden-widescreen"></div></div><div class="column column-right is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only order-3"><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-06-17T14:55:16.152Z">2023-06-17</time></p><p class="title"><a href="/meet-swift-data/">Swift Data 的初步探索</a></p><p class="categories"><a href="/categories/%E6%92%B8%E4%BB%A3%E7%A0%81/">撸代码</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-06-07T02:44:08.923Z">2023-06-07</time></p><p class="title"><a href="/wwdc-23-whats-new-in-swiftui/">SwiftUI 新功能</a></p><p class="categories"><a href="/categories/%E6%92%B8%E4%BB%A3%E7%A0%81/">撸代码</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-05-01T13:50:45.901Z">2023-05-01</time></p><p class="title"><a href="/open-menu-bar-extra-with-apple-script/">用 Apple Script 打开任务栏菜单</a></p><p class="categories"><a href="/categories/%E7%9E%8E%E6%8A%98%E8%85%BE/">瞎折腾</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-04-15T14:14:29.269Z">2023-04-15</time></p><p class="title"><a href="/wwdc-23-swift-student-challenge/">WWDC 23 Swift Student Challenge</a></p><p class="categories"><a href="/categories/%E6%92%B8%E4%BB%A3%E7%A0%81/">撸代码</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-04-06T08:51:31.495Z">2023-04-06</time></p><p class="title"><a href="/swift-charts-intro-marks/">Swift Charts 入门 —— 认识各种标记</a></p><p class="categories"><a href="/categories/%E6%92%B8%E4%BB%A3%E7%A0%81/">撸代码</a></p></div></article></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">follow.it</h3><form action="https://api.follow.it/subscription-form/c3M2OW8yVnRqMW5xSkFTTzBiSHovSHNQWmdwSFdnZWZ6RWR3Y0VJMHFxRUViRmZxYlhBR0wxam9sMGRSU2ZyaE1RQ2pEeEJJY0RodkFVS05XTnZ3U21XbWZTRUwyemJaQTBtUEdvNUJOS3Z0WCs1T2tQbURvOUlQcDQxaEZoS1J8SWRqMER0VVNFUFdPVnNaMUc1RWI2ZTNkaDdtTEd6NXVaMVkvRVFLWWw2VT0=/8" method="post" target="_blank"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div><p class="help">留下邮箱，第一时间接收新推文！</p></form></div></div></div><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://ppoffice.github.io/hexo-theme-icarus/tags/Icarus用户指南/" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Icarus</span></span><span class="level-right"><span class="level-item tag">ppoffice.github.io</span></span></a></li></ul></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/icons/icon.png" alt="LiYanan2004 - 我的博客" height="28"></a><p class="is-size-7"><span>&copy; 2023 LiYanan</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv">共<span id="busuanzi_value_site_uv">0</span>个访客</span></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="GitHub" href="https://github.com/LiYanan2004"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
