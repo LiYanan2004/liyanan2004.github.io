@@ -245,9 +245,9 @@
     <category term="撸代码" scheme="https://liyanan2004.github.io/categories/%E6%92%B8%E4%BB%A3%E7%A0%81/"/>
     
     
-    <category term="swiftui" scheme="https://liyanan2004.github.io/tags/swiftui/"/>
-    
     <category term="swift" scheme="https://liyanan2004.github.io/tags/swift/"/>
+    
+    <category term="swiftui" scheme="https://liyanan2004.github.io/tags/swiftui/"/>
     
   </entry>
   
@@ -272,9 +272,9 @@
     <category term="撸代码" scheme="https://liyanan2004.github.io/categories/%E6%92%B8%E4%BB%A3%E7%A0%81/"/>
     
     
-    <category term="swift" scheme="https://liyanan2004.github.io/tags/swift/"/>
-    
     <category term="MarkdownView" scheme="https://liyanan2004.github.io/tags/MarkdownView/"/>
+    
+    <category term="swift" scheme="https://liyanan2004.github.io/tags/swift/"/>
     
   </entry>
   
